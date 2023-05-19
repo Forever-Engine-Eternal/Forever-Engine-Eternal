@@ -58,6 +58,7 @@
 
 - In-game Cutscenes
 - FlxAnimate Support
+- Imports support for enums, abstracts and typedefs in HScript
 - Github Wiki
 - Documentation
 
