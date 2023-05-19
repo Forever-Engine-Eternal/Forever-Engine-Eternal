@@ -7,7 +7,7 @@ import flixel.FlxSprite;
 
 /**
  * Preloading state to preload assets using a thread.
- * @author - State: Sword352      - Caching: BeastlyGhost
+ * @author Sword352, base caching by BeastlyGhost
  */
 class PreloadState extends forever.music.MusicBeat.MusicBeatState
 {

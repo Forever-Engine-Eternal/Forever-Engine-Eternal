@@ -13,7 +13,7 @@ import flixel.system.FlxAssets.FlxShader;
  * The `ColorPicker` object allow you to make a color picker.
  * If we click on the slider, the hue of the box will change depending on the mouse position.
  * You can also make it trigger a function when the hue changes using the `onChange` variable.
- * - Written by Sword352, help + idea by Ne_Eo
+ * @author Sword352, help + idea by Ne_Eo
  * @see Original color picker shader: https://www.shadertoy.com/view/NlyGRz
  */
 class ColorPicker extends FlxSpriteGroup
