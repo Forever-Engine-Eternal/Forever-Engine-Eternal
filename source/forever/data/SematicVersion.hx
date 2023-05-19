@@ -10,13 +10,15 @@ class SematicVersion {
 	public var major(default, null):Int;
 	public var minor(default, null):Int;
 	public var patch(default, null):Int;
+	public var extraData(default, null):String;
 	public var showGitSHA(default, null):Bool;
 
-	public function new(Major:Int, Minor:Int, Patch:Int, ShowGitSHA:Bool = false):Void {
+	public function new(Major:Int, Minor:Int, Patch:Int, ShowGitSHA:Bool = false, ExtraData:String = null):Void {
 		major = Major;
 		minor = Minor;
 		patch = Patch;
 		showGitSHA = ShowGitSHA;
+		extraData = ExtraData;
 	}
 
 	/**
@@ -27,6 +29,8 @@ class SematicVersion {
 	public function toString(sematic:Bool = false):String {
 		var returnString:String = '${major}.${minor}';
 		returnString += sematic ? '.${patch}' : '${patch}';
+		if (extraData != null)
+			returnString += ' ${extraData}';
 		if (showGitSHA) {
 			var sha:String = getGitSHA();
 			if (sha != "") {

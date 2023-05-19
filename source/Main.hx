@@ -15,31 +15,30 @@ import sys.FileSystem;
 import sys.io.File;
 
 class Main extends Sprite {
-	// class action variables
-	public static var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
-	public static var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
 
-	public static var mainClassState:Class<FlxState> = Init; // Determine the main class state of the game
-	public static var framerate:Int = 120; // How many frames per second the game should run at.
-
-	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
-	#if (flixel < "5.0.0")
-	var zoom:Float = -1; // [FLIXEL VERSIONS BELOW 5.0.0 ONLY] If -1, zoom is automatically calculated to fit the window dimensions.
-	#end
+	public static final gameInfo:Dynamic = {
+		width: 1280, // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
+		height: 720, // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
+		framerate: 120, // How many frames per second the game should run at.
+		firstState: Init, // Determine the first class state of the game when it boots up
+		skipSplash: true, // Whether to skip the flixel splash screen that appears in release mode.
+		#if (flixel < "5.0.0")
+		zoom: -1 // [FLIXEL VERSIONS BELOW 5.0.0 ONLY] If -1, zoom is automatically calculated to fit the window dimensions.
+		#end
+	};
 
 	/**
-	 * Version Scheme goes as: MAJOR.MINOR,
-	 * patch versions simply add more numbers to the minor version,
-	 * eg. 1.01
+	 * The version scheme of `normal` or `debug` goes as: MAJOR.MINOR.
+	 * Patch versions simply add more numbers to the minor version, eg. 1.01
 	 */
-	public static var gameVersionDebug:SematicVersion = new SematicVersion(1, 0, 0, true);
-	public static var gameVersion:SematicVersion = new SematicVersion(1, 0, 0);
-	public static var funkinVersion:SematicVersion = new SematicVersion(0, 2, 8);
+	public static final gameVersions:Map<String, SematicVersion> = [
+		"normal" => new SematicVersion(0, 1, 0),
+		"debug" => new SematicVersion(0, 1, 0, true, "ALPHA"),
+		"funkin" => new SematicVersion(0, 2, 8)
+	];
 
 	public static var game:FNFGame; // the main game
 	public static var infoCounter:FPSOverlay; // initialize the heads up display that shows information before creating it.
-
-	public static var gameWeeks:Array<Dynamic> = [];
 
 	// most of these variables are just from the base game!
 	// be sure to mess around with these if you'd like.
@@ -47,9 +46,7 @@ class Main extends Sprite {
 	public static function main():Void
 	{
 		Lib.current.addChild(new Main());
-		
-		@:privateAccess
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, function(e) game.exceptionCaughtOpenFL(e));
+		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, function(e) game.exceptionCaught(e));
 	}
 
 	// calls a function to set the game up
@@ -65,17 +62,17 @@ class Main extends Sprite {
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
 		if (zoom == -1) {
-			var ratioX:Float = stageWidth / gameWidth;
-			var ratioY:Float = stageHeight / gameHeight;
+			var ratioX:Float = stageWidth / gameInfo.width;
+			var ratioY:Float = stageHeight / gameInfo.height;
 			zoom = Math.min(ratioX, ratioY);
-			gameWidth = Math.ceil(stageWidth / zoom);
-			gameHeight = Math.ceil(stageHeight / zoom);
+			gameInfo.width = Math.ceil(stageWidth / zoom);
+			gameInfo.height = Math.ceil(stageHeight / zoom);
 		}
 		#end
 
 		FlxTransitionableState.skipNextTransIn = true;
 
-		game = new FNFGame(gameWidth, gameHeight, mainClassState, #if (flixel < "5.0.0") zoom, #end framerate, framerate, skipSplash); // here we create the base game
+		game = new FNFGame(gameInfo.width, gameInfo.height, gameInfo.firstState, #if (flixel < "5.0.0") gameInfo.zoom, #end gameInfo.framerate, gameInfo.framerate, gameInfo.skipSplash); // here we create the base game
 		addChild(game); // initializing the game 
 
 		// begin the discord rich presence
@@ -171,11 +168,13 @@ class FNFGame extends FlxGame {
 			return exceptionCaught(e);
 	}
 
-	private function exceptionCaught(e:haxe.Exception) {
+	public function exceptionCaught(e:flixel.util.typeLimit.OneOfTwo<UncaughtErrorEvent, haxe.Exception>) {
+		var errMsg = Std.isOfType(e, UncaughtErrorEvent) ? cast(e, UncaughtErrorEvent).error : cast(e, haxe.Exception).message;
+
 		var callStack:CallStack = CallStack.exceptionStack(true);
 
 		final formattedMessage:String = getCallStack().join("\n");
-		var errorMessage = formattedMessage + '\nUncaught Error: ${e.message}\nPlease report this error to the GitHub page: ${EternalGithubRepoURL}';
+		var errorMessage = formattedMessage + '\nUncaught Error: ${errMsg}\nPlease report this error to the GitHub page: ${EternalGithubRepoURL}';
 
 		writeLog(getLogPath(), errorMessage);
 
@@ -184,23 +183,7 @@ class FNFGame extends FlxGame {
 
 		// doing visuals later, just force switch this thing for now
 		Lib.application.window.alert(errorMessage + '\n\nPress OK to go back to the game.', "Forever Engine: Eternal - Exception Report");
-		goToExceptionState(e.message, formattedMessage, true, callStack);
-	}
-
-	private function exceptionCaughtOpenFL(e:UncaughtErrorEvent) {
-		var callStack:CallStack = CallStack.exceptionStack(true);
-
-		final formattedMessage:String = getCallStack().join("\n");
-		var errorMessage = formattedMessage + '\nUncaught Error: ${e.error}\nPlease report this error to the GitHub page: ${EternalGithubRepoURL}';
-
-		writeLog(getLogPath(), errorMessage);
-
-		forever.music.Conductor.songPosition = 0;
-		forever.Tools.killMusic([FlxG.sound.music]);
-
-		// doing visuals later, just force switch this thing for now
-		Lib.application.window.alert(errorMessage + '\n\nPress OK to go back to the game.', "Forever Engine: Eternal - Exception Report");
-		goToExceptionState(e.error, formattedMessage, true, callStack);
+		goToExceptionState(errMsg, formattedMessage, true, callStack);
 	}
 
 	private function getCallStack():Array<String> {

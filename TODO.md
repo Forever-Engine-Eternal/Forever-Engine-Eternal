@@ -15,6 +15,7 @@
 - Fix "Miss" rating being shown as "Shit:Late"
 - Alphabet rewrite
 - Fix Ratings velocity
+- Fix the fps slow down issue (slows down the fps and cap it to the slow value)
 - Scrap the rating screen?
 
 // For Sword
@@ -58,6 +59,7 @@
 - In-game Cutscenes
 - FlxAnimate Support
 - Github Wiki
+- Documentation
 
 ---------------
 

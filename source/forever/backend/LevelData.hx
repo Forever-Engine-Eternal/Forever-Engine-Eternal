@@ -7,10 +7,11 @@ class LevelData {
 	// TODO: custom difficulties per level
 	public static final defaultDiffs:Array<String> = ["EASY", "NORMAL", "HARD"];
 	public static var curDifficulties:Array<String> = defaultDiffs;
+	public static var gameWeeks:Array<Dynamic> = [];
 
 	public static function loadLevels(clearCurrent:Bool = false):Void {
 		if (clearCurrent)
-			Main.gameWeeks = [];
+			LevelData.gameWeeks = [];
 
 		if (FileSystem.exists(Paths.getPath('data/weekList', TXT))) {
 			var weekFile:String = Paths.getPath('data/weekList', TXT).trim();
@@ -33,8 +34,8 @@ class LevelData {
 
 				var keyParams:Array<String> = key.split(" - ");
 				var week:Dynamic = [songList, iconList, colorList, keyParams[1], bpms, difficulties];
-				if (!Main.gameWeeks.contains(week))
-					Main.gameWeeks[Std.parseInt(keyParams[0])] = week;
+				if (!LevelData.gameWeeks.contains(week))
+					LevelData.gameWeeks[Std.parseInt(keyParams[0])] = week;
 			}
 		}
 	}

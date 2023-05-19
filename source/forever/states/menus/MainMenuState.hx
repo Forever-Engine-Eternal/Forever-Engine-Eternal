@@ -105,8 +105,11 @@ class MainMenuState extends MusicBeatState {
 
 		changeSelection();
 
-		makeWatermark('Friday Night Funkin\' v${Main.funkinVersion.toString(true)}', FlxG.height - 18);
-		makeWatermark('Forever Eternal v${#if debug Main.gameVersionDebug.toString() #else Main.gameVersion.toString() #end}', FlxG.height - 36);
+		makeWatermark('Friday Night Funkin\' v${Main.gameVersions["funkin"].toString(true)}', FlxG.height - 18);
+		makeWatermark('Forever Eternal v${Main.gameVersions["normal"].toString()}', FlxG.height - 36);
+
+		var debugWatermark = makeWatermark(Main.gameVersions["debug"].toString(), FlxG.height - 18);
+		debugWatermark.x = FlxG.width - debugWatermark.width;
 
 		var mouseHandler = new forever.data.inputs.MouseHandler();
 		mouseHandler.onWheelScroll = changeSelection;
@@ -116,12 +119,13 @@ class MainMenuState extends MusicBeatState {
 		add(test);*/
 	}
 
-	function makeWatermark(text:String, y:Float)
+	function makeWatermark(text:String, y:Float):FlxText
 	{
 		var versionShit:FlxText = new FlxText(5, y, 0, text, 12);
 		versionShit.setFormat(Paths.font("vcr"), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		versionShit.scrollFactor.set();
 		add(versionShit);
+		return versionShit;
 	}
 
 	var selectedSomethin:Bool = false;
@@ -161,7 +165,7 @@ class MainMenuState extends MusicBeatState {
 
 						switch (daChoice) {
 							case 'story mode':
-								if (Main.gameWeeks.length < 1)
+								if (LevelData.gameWeeks.length < 1)
 									return FlxG.resetState();
 								Main.switchState(new StoryMenuState());
 							case 'freeplay': Main.switchState(new FreeplayState());

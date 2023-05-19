@@ -15,7 +15,6 @@ class ControlItem extends flixel.group.FlxGroup.FlxTypedGroup<FlxText>
 {
     public var targetY:Float = 0;
     public var alpha(default, set):Float = 1;
-    public var isSelected:Bool = true;
     public var curSelected:Int = 0;
     public var text(get, never):String;
     public var onChangeKeybind:FlxKey->Void = null;
@@ -63,8 +62,11 @@ class ControlItem extends flixel.group.FlxGroup.FlxTypedGroup<FlxText>
         {
             var pressedControl:FlxKey = cast FlxG.keys.firstJustPressed();
 
+            if (Init.gameControls.get(control)[0][curSelected - 1] == pressedControl)
+                pressedControl = NONE;
+
             Init.gameControls.get(control)[0][curSelected - 1] = pressedControl;
-            members[curSelected].text = pressedControl.toString();
+            members[curSelected].text = formatKey(pressedControl);
 
             Controls.refreshKeys();
             Init.saveControls();
@@ -86,7 +88,7 @@ class ControlItem extends flixel.group.FlxGroup.FlxTypedGroup<FlxText>
 
     public function selectItem()
     {
-        if (control != null && isSelected)
+        if (control != null)
         {
             changingKeybind = true;
 

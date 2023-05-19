@@ -27,7 +27,7 @@ class Discord {
 		rpcData = {
 			clientID: ini.getSection().clientID,
 			icon: ini.getSection().icon,
-			largeImageText: ini.getSection().largeImageText.replace("$ENGINE_VERSION", Main.gameVersion.toString()),
+			largeImageText: ini.getSection().largeImageText.replace("$ENGINE_VERSION", Main.gameVersions["normal"].toString()),
 		};
 
 		DiscordRpc.start({

@@ -1,5 +1,6 @@
 package forever.states.editors;
 
+import flixel.util.FlxSort;
 import forever.objects.notes.Note;
 import forever.ui.ForeverTabMenu;
 import forever.ui.ForeverButton;
@@ -34,6 +35,13 @@ class ChartEditor extends MusicBeatState {
 	public var renderedLanes:FlxTypedGroup<FlxSprite>;
 	public var lanesLine:FlxSprite;
 	public var mouseCursor:FlxSprite;
+
+	var recycledNotes:Map<Int, Array<Note>> = [
+		0 => [],
+		1 => [],
+		2 => [],
+		3 => []
+	];
 
 	public var songMeta(get, never):SongMetadata;
 
@@ -102,16 +110,13 @@ class ChartEditor extends MusicBeatState {
 			else
 				mouseCursor.y = Math.floor(FlxG.mouse.y / checkerSize) * checkerSize;
 
-			if (FlxG.mouse.justPressed)
+			if (FlxG.mouse.justPressed && curSect >= 0)
 			{
 				if (!FlxG.mouse.overlaps(renderedNotes))
 				{
 					// add a note
 					var noteStrum = getStrumTime(mouseCursor.y);
-	
-					var notesSection = Math.floor(noteStrum / (Conductor.stepCrochet * 16));
 					var noteDirection = adjustSide(Math.floor((mouseCursor.x - checkerboard.x) / checkerSize), song.sections[curSect].cameraPoints == 1);
-					var noteSus = 0; // ninja you will NOT get away with this
 	
 					// noteCleanup(notesSection, noteStrum, noteData);
 					var note = generateChartNote(noteStrum, noteDirection, false);
@@ -142,7 +147,9 @@ class ChartEditor extends MusicBeatState {
 								note.kill();
 								renderedNotes.remove(note);
 								song.sections[curSect].notes.remove({timeStep: note.timeStep, direction: note.direction});
-								note.destroy();
+								recycledNotes.get(FlxMath.wrap(note.direction, 0, 4)).push(note);
+								for (array in recycledNotes)
+									array.sort(function(n1:Note, n2:Note) return FlxSort.byValues(FlxSort.ASCENDING, n1.timeStep, n2.timeStep));
 								//
 							}
 						}
@@ -252,6 +259,15 @@ class ChartEditor extends MusicBeatState {
 
 	private function generateChartNote(strumTime, noteDirection, isSustain):Note
 	{
+		if (recycledNotes.get(noteDirection) != null && recycledNotes.get(noteDirection).length > 0)
+		{
+			var note:Note = recycledNotes.get(noteDirection).shift();
+			renderedNotes.add(note);
+			return note;
+		}
+		else
+			trace('NULL!!!! ${noteDirection}');
+
 		var note:Note = SkinManager.generateArrow(strumTime, noteDirection % 4, "", isSustain);
 		// I love how there's 3 different engines that use this exact same variable name lmao
 		note.direction = noteDirection;
@@ -327,5 +343,5 @@ class ChartEditor extends MusicBeatState {
 		return FlxMath.remapToRange(yPos, 0, (songMusic.length / Conductor.stepCrochet) * checkerSize, 0, songMusic.length);
 
 	@:keep inline function adjustSide(noteData:Int, sectionTemp:Bool)
-		return (sectionTemp ? ((noteData + 4) % 8) : noteData);
+		return sectionTemp ? (noteData - 4) % 8 : noteData;
 }

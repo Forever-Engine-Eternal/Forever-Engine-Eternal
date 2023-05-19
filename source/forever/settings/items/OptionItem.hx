@@ -115,7 +115,7 @@ class OptionItem extends flixel.text.FlxText
                     {
                         holdLimitation += 0.05;
 
-                        if (holdLimitation > 0.2)
+                        if (holdLimitation > (FlxG.keys.pressed.SHIFT ? 0.05 : 0.2))
                         {
                             holdLimitation = 0;
                             updateNonBoolValue();

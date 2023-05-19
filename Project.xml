@@ -3,8 +3,8 @@
 	<!-- _________________________ Application Settings _________________________ -->
 
 	<app title="Forever Engine: Eternal" file="FE-Eternal"
-		packageName="com.beastlyghost.feEternal" package="com.beastlyghost.feEternal"
-		main="Main" company="BeastlyGhost" />
+		packageName="com.sword.feEternal" package="com.sword.feEternal"
+		main="Main" company="Sword352" />
 
 	<!-- The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the
 	swf into a html file or you can set the actual size of your file manually at

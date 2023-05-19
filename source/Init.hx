@@ -131,7 +131,7 @@ class Init extends FlxState {
 	];
 
 	override public function create():Void {
-		FlxG.save.bind("settings", "BeastlyGhost/FE-Eternal");
+		FlxG.save.bind("settings", "Sword352/FE-Eternal");
 
 		forever.backend.Logs.init();
 		forever.backend.Achievements.init();
@@ -147,6 +147,7 @@ class Init extends FlxState {
 		FlxG.game.setFilters(filters);
 
 		// Some additional changes to default HaxeFlixel settings, both for ease of debugging and usability.
+		FlxG.game.focusLostFramerate = 60; // This set the focus lost framerate to 60 to avoid capped-fps bugs
 		FlxG.fixedTimestep = false; // This ensures that the game is not tied to the FPS
 		FlxG.mouse.useSystemCursor = true; // Use system cursor because it's prettier
 		FlxG.mouse.visible = false; // Hide mouse on start
@@ -173,15 +174,8 @@ class Init extends FlxState {
 		{
 			if (Std.isOfType(gameSettings.get(setting)[0], Int))
 			{
-				try
-				{
-					if (gameSettings.get(setting)[2][0] != null && gameSettings.get(setting)[2][1] != null)
-						resetOutOfBounds(setting, gameSettings.get(setting)[0], gameSettings.get(setting)[2][0], gameSettings.get(setting)[2][1]);
-				}
-				catch (e)
-				{
-					print('Failed resetting bounds of ${setting}, Uncaught Error: ${e} - ${e.details()}', WARNING);
-				}
+				if (gameSettings.get(setting)[2] != null && gameSettings.get(setting)[2][0] != null && gameSettings.get(setting)[2][1] != null)
+					resetOutOfBounds(setting, gameSettings.get(setting)[0], gameSettings.get(setting)[2][0], gameSettings.get(setting)[2][1]);
 			}
 		}
 

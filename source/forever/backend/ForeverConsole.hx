@@ -27,7 +27,7 @@ class ForeverConsole extends Sprite
         eternalText.autoSize = LEFT;
         eternalText.selectable = false;
         eternalText.textColor = 0xFFFFFFFF;
-        eternalText.text = 'Forever Engine: Eternal\nVersion: ${Main.gameVersion.toString()}';
+        eternalText.text = 'Forever Engine: Eternal\nVersion: ${Main.gameVersions["normal"].toString()}';
         eternalText.sharpness = 100;
         addChild(eternalText);
 

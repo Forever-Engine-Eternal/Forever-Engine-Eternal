@@ -71,8 +71,9 @@ class FNFScript {
 			}
 		}
 
-		parser.preprocesorValues.set("version", Main.gameVersion.toString(true));
+		parser.preprocesorValues.set("version", Main.gameVersions["normal"].toString(true));
 		parser.preprocesorValues.set("debug", #if debug true #else false #end);
+		parser.preprocesorValues.set("platform", #if windows "windows" #elseif macos "macos" #elseif linux "linux" #else "unknown" #end);
 
 		for (key in defaultImports.keys())
 			interp.variables.set(key, defaultImports.get(key));

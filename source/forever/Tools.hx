@@ -260,7 +260,7 @@ class Tools {
 		}
 	}
 
-	@:keep public static inline function invokeTempSave(funcToDo:FlxSave->Void, name:String, ?folder:String = "BeastlyGhost/FE-Eternal"):Void {
+	@:keep public static inline function invokeTempSave(funcToDo:FlxSave->Void, name:String, ?folder:String = "Sword352/FE-Eternal"):Void {
 		var tmpSav:FlxSave = new FlxSave();
 		tmpSav.bind(name, folder);
 		// run save function

@@ -62,13 +62,13 @@ class FreeplayState extends MusicBeatState {
 
 		mutex = new Mutex();
 
-		if (Main.gameWeeks.length > 0) {
-			for (i in 0...Main.gameWeeks.length) {
-				var weekSongs:Array<String> = Main.gameWeeks[i][0];
-				var weekIcons:Array<String> = Main.gameWeeks[i][1];
-				var weekColors:Array<FlxColor> = Main.gameWeeks[i][2];
-				var weekBpms:Array<Float> = Main.gameWeeks[i][4];
-				var weekDifficulties:Array<String> = Main.gameWeeks[i][5];
+		if (LevelData.gameWeeks.length > 0) {
+			for (i in 0...LevelData.gameWeeks.length) {
+				var weekSongs:Array<String> = LevelData.gameWeeks[i][0];
+				var weekIcons:Array<String> = LevelData.gameWeeks[i][1];
+				var weekColors:Array<FlxColor> = LevelData.gameWeeks[i][2];
+				var weekBpms:Array<Float> = LevelData.gameWeeks[i][4];
+				var weekDifficulties:Array<String> = LevelData.gameWeeks[i][5];
 				addWeek(weekSongs, i, weekIcons, weekColors, weekBpms, weekDifficulties);
 
 				for (j in weekSongs)

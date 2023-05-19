@@ -102,7 +102,6 @@ class ControlsSubState extends forever.music.MusicBeat.MusicBeatSubState
         {
             item.targetY = changement - curSelected;
             item.alpha = item.ID == curSelected ? 1 : 0.6;
-            item.isSelected = item.ID == curSelected;
 
             changement++;
         }

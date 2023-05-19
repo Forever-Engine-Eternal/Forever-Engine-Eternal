@@ -94,6 +94,8 @@ class FPS extends TextField {
 		defaultTextFormat = new TextFormat(Paths.font('dm-sans'), 14, 0xFFFFFF);
 		text = "";
 
+		var debugData = Main.gameVersions["debug"].toString();
+
 		addEventListener(Event.ENTER_FRAME, function(_:Event) {
 			var now:Float = Timer.stamp();
 			times.push(now);
@@ -105,10 +107,11 @@ class FPS extends TextField {
 				trueFPS = Init.trueSettings.get('Framerate Cap');
 
 			var mem:Float = Init.trueSettings.get('Accurate Memory') ? Memory.getCurrentUsage() : System.totalMemory;
-			if (Init.trueSettings.get('Accurate Memory'))
-				memPeak = Memory.getPeakUsage();
-			else if (mem > memPeak)
+
+			if (!Init.trueSettings.get('Accurate Memory') && mem > memPeak)
 				memPeak = mem;
+			else if (Init.trueSettings.get('Accurate Memory'))
+				memPeak = Memory.getPeakUsage();
 
 			text = "";
 			if (Init.trueSettings.get("FPS Counter"))
@@ -116,10 +119,11 @@ class FPS extends TextField {
 			if (Init.trueSettings.get("Memory Counter"))
 				text += '${FlxStringUtil.formatBytes(mem)} / ${FlxStringUtil.formatBytes(memPeak)}\n';
 			if (showDebugInfo)
-				text += '\nObjects:\nAlive: ${FlxG.state.members.length}\nDead: ${([for (i in FlxG.state.members) if (i != null && !i.exists) i]).length}';
-
-			/*if (showDebugInfo)
-				text += '\nConductor info:\nSong Position: ${Conductor.songPosition}';*/
+			{
+				// text += '\nConductor info:\nSong Position: ${Conductor.songPosition}';
+				text += '\nObjects:\nAlive: ${FlxG.state.members.length}\nDead: ${([for (i in FlxG.state.members) if (i != null && !i.exists) i]).length}\n';
+				text += '\nForever Engine: Eternal\n${debugData}';
+			}	
 			
 			visible = text.length > 0;
 		});
