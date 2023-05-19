@@ -70,7 +70,7 @@ class Achievements
     @:keep public static function unlockAchievement(achievement:String):Void {
 
         if (achievementsMap.exists(achievement)) {
-            if (unlockedAchievements.get(achievement) == true)
+            if (unlockedAchievements.get(achievement) != null && unlockedAchievements.get(achievement) == true)
                 return;
 
             unlockedAchievements.set(achievement, true);
