@@ -67,9 +67,12 @@ class Achievements
         }, "achievements");
     }
 
-    @:keep public static function unlockAchievement(achievement:String) {
+    @:keep public static function unlockAchievement(achievement:String):Void {
 
         if (achievementsMap.exists(achievement)) {
+            if (unlockedAchievements.get(achievement) == true)
+                return;
+
             unlockedAchievements.set(achievement, true);
             saveAchievements();
         }
